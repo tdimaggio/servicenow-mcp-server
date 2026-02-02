@@ -40,7 +40,23 @@ Before you begin, ensure you have:
 
 ## Quick Start
 
-### Step 1: Install Python
+**Important:** Complete the ServiceNow configuration section first to create your service account before proceeding with these steps.
+
+### Part 1: ServiceNow Setup (Do This First!)
+
+Before setting up the MCP server, you need to create a service account in ServiceNow. Jump to the [ServiceNow Configuration](#servicenow-configuration) section below and complete:
+
+1. Creating the Service Account
+2. Creating the Role  
+3. Granting Table Permissions
+
+Once you have your `mcp.syslog` user credentials, come back here to continue.
+
+---
+
+### Part 2: Local MCP Server Setup
+
+#### Step 1: Install Python
 
 Open Terminal and verify Python is installed:
 
@@ -54,7 +70,7 @@ If Python is not installed, install it via Homebrew:
 brew install python
 ```
 
-### Step 2: Clone or Download This Repository
+#### Step 2: Clone or Download This Repository
 
 ```bash
 cd ~
@@ -68,7 +84,7 @@ Or if you downloaded a ZIP, extract it and navigate to the folder:
 cd ~/servicenow-mcp
 ```
 
-### Step 3: Set Up Python Virtual Environment
+#### Step 3: Set Up Python Virtual Environment
 
 Create and activate a virtual environment to isolate dependencies:
 
@@ -79,7 +95,7 @@ source venv/bin/activate
 
 You should see `(venv)` at the start of your terminal prompt.
 
-### Step 4: Install Dependencies
+#### Step 4: Install Dependencies
 
 Install the required Python packages:
 
@@ -93,7 +109,9 @@ Or use the requirements file:
 pip install -r requirements.txt
 ```
 
-### Step 5: Configure ServiceNow Credentials
+#### Step 5: Configure ServiceNow Credentials
+
+**Prerequisites:** You must have completed the ServiceNow configuration section and created the `mcp.syslog` service account.
 
 Create a `.env` file in the project root:
 
@@ -106,15 +124,15 @@ Edit the file and add your ServiceNow instance details:
 ```ini
 SERVICENOW_INSTANCE=https://your-instance.service-now.com
 SERVICENOW_USERNAME=mcp.syslog
-SERVICENOW_PASSWORD=your-secure-password
+SERVICENOW_PASSWORD=your-secure-password-from-servicenow
 ```
 
 **Important:** 
-- Do not include `https://` twice (the instance URL should already have it)
-- Use the service account username (see "ServiceNow Configuration" below)
+- Replace `your-instance` with your actual ServiceNow instance name
+- Use the password you set when creating the `mcp.syslog` user in ServiceNow
 - Never commit this file to version control (it's already in `.gitignore`)
 
-### Step 6: Test the Connection
+#### Step 6: Test the Connection
 
 Verify your credentials work before proceeding:
 
@@ -131,9 +149,13 @@ Status code: 200
 Sample log: [ConversationProcessor] Found 0 unprocessed conversations...
 ```
 
-If you see errors, verify your credentials in `.env` and check that your service account has the proper permissions.
+If you see errors, verify:
+- Your credentials in `.env` are correct
+- The `mcp.syslog` user exists and is active in ServiceNow
+- The `claude_mcp` role is assigned to the user
+- You ran the table permission script (see ServiceNow Configuration section)
 
-### Step 7: Configure Claude Desktop
+#### Step 7: Configure Claude Desktop
 
 Create or edit Claude Desktop's configuration file:
 
@@ -162,7 +184,7 @@ Add the following configuration (replace `YOUR_USERNAME` with your actual Mac us
 
 Save and exit (Ctrl+X, then Y, then Enter if using nano).
 
-### Step 8: Restart Claude Desktop
+#### Step 8: Restart Claude Desktop
 
 1. **Quit Claude Desktop completely** (Cmd+Q or Claude > Quit Claude)
 2. **Reopen Claude Desktop**
@@ -171,7 +193,7 @@ Save and exit (Ctrl+X, then Y, then Enter if using nano).
    - Look for "servicenow-debug" with status "Connected" or "Running"
    - The hammer icon (🔨) should appear in the message input area
 
-### Step 9: Test in Claude Desktop
+#### Step 9: Test in Claude Desktop
 
 Start a new conversation in Claude Desktop and try these queries:
 
