@@ -14,7 +14,7 @@ INSTANCE = os.getenv("SERVICENOW_INSTANCE")
 USERNAME = os.getenv("SERVICENOW_USERNAME")
 PASSWORD = os.getenv("SERVICENOW_PASSWORD")
 
-# Define all tools to test (only the 9 working tools)
+# Define all working tools to test (6 tools)
 TOOLS = [
     {
         "name": "query_syslog",
@@ -53,37 +53,8 @@ TOOLS = [
         },
     },
     {
-        "name": "query_flow_executions",
-        "table": "sys_flow_context",
-        "params": {
-            "sysparm_limit": 2,
-            "sysparm_query": "sys_created_onRELATIVEGT@minute@ago@60^ORDERBYDESCsys_created_on",
-            "sysparm_fields": "sys_created_on,sys_updated_on,state,workflow_version.workflow,trigger_name,error_text",
-            "sysparm_display_value": "true",
-        },
-    },
-    {
         "name": "query_rest_messages",
         "table": "sys_rest_message",
-        "params": {
-            "sysparm_limit": 2,
-            "sysparm_query": "sys_created_onRELATIVEGT@minute@ago@60^ORDERBYDESCsys_created_on",
-            "sysparm_display_value": "true",
-        },
-    },
-    {
-        "name": "query_scheduled_jobs",
-        "table": "sysauto",
-        "params": {
-            "sysparm_limit": 2,
-            "sysparm_query": "ORDERBYDESCsys_updated_on",
-            "sysparm_fields": "name,state,next_action,last_run,last_run_duration,run_count,error_description",
-            "sysparm_display_value": "true",
-        },
-    },
-    {
-        "name": "query_execution_tracker",
-        "table": "sys_execution_tracker",
         "params": {
             "sysparm_limit": 2,
             "sysparm_query": "sys_created_onRELATIVEGT@minute@ago@60^ORDERBYDESCsys_created_on",

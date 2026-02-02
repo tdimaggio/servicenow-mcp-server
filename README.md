@@ -8,12 +8,10 @@ This Model Context Protocol (MCP) server enables Claude Desktop to directly quer
 
 - 🔍 **Application Logs** - Query syslog entries with flexible filtering
 - 🤖 **AI Execution Monitoring** - Track AI agent activity and execution plans
-- ⚡ **Flow Debugging** - Monitor Flow Designer executions and errors
 - 📊 **GenAI Metrics** - View AI metrics and user feedback
 - 🔄 **Workflow Tracking** - Monitor classic workflow executions
-- 📅 **Scheduled Jobs** - Check job status and execution history
-- 🚀 **Script Execution** - Track long-running background scripts
 - 🔌 **REST API Configs** - View outbound REST integrations
+- 📝 **GenAI Metadata** - Query GenAI metadata including user feedback
 
 ### What is MCP?
 
@@ -200,11 +198,11 @@ Start a new conversation in Claude Desktop and try these queries:
 ```
 Show me recent errors from syslog
 
-Check for any flow executions in the last hour
-
-Show me scheduled jobs that are in error state
-
 What AI execution plans have run recently?
+
+Show me GenAI metadata from the last hour
+
+Show me REST API configurations
 ```
 
 ---
@@ -257,11 +255,8 @@ This script creates Access Control Lists (ACLs) that grant read-only access to:
 - `sn_aia_execution_plan` - AI execution plans
 - `sys_generative_ai_metric` - GenAI metrics
 - `sys_gen_ai_log_metadata` - GenAI metadata
-- `sys_flow_context` - Flow executions
 - `sys_rest_message` - REST API configurations
-- `sys_execution_tracker` - Script execution tracking
 - `wf_context` - Workflow contexts
-- `sysauto` - Scheduled jobs
 
 ### Verify Permissions
 
@@ -321,18 +316,7 @@ Query GenAI metadata including user feedback.
 
 **Example:** "Show me GenAI feedback"
 
-### 5. query_flow_executions
-Monitor Flow Designer executions and errors.
-
-**Parameters:**
-- `flow_name` - Filter by flow name
-- `status` - Filter by state (waiting, executing, complete, error, cancelled)
-- `limit` - Max results (default 20)
-- `minutes_ago` - Time window (default 60)
-
-**Example:** "Show me failed flow executions"
-
-### 6. query_rest_messages
+### 5. query_rest_messages
 View REST message configurations for outbound integrations.
 
 **Parameters:**
@@ -341,26 +325,7 @@ View REST message configurations for outbound integrations.
 
 **Example:** "Show me REST API configurations"
 
-### 7. query_scheduled_jobs
-Check scheduled job status and execution history.
-
-**Parameters:**
-- `job_name` - Filter by job name
-- `state` - Filter by state (ready, running, queued, error)
-- `limit` - Max results (default 20)
-
-**Example:** "Show me scheduled jobs in error state"
-
-### 8. query_execution_tracker
-Track long-running background scripts and their progress.
-
-**Parameters:**
-- `limit` - Max results (default 20)
-- `minutes_ago` - Time window (default 60)
-
-**Example:** "Show me currently running background scripts"
-
-### 9. query_workflow_context
+### 6. query_workflow_context
 Monitor classic workflow executions (pre-Flow Designer).
 
 **Parameters:**
@@ -501,8 +466,8 @@ Testing: query_syslog (syslog)
 
 Summary
 ================================================================================
-Total tools tested: 9
-✓ Successful: 9
+Total tools tested: 6
+✓ Successful: 6
 ✗ Failed: 0
 ```
 
@@ -667,11 +632,8 @@ var tables = [
     'sn_aia_execution_plan',
     'sys_generative_ai_metric',
     'sys_gen_ai_log_metadata',
-    'sys_flow_context',
     'sys_rest_message',
-    'sys_execution_tracker',
-    'wf_context',
-    'sysauto'
+    'wf_context'
 ];
 
 // Get the claude_mcp role sys_id
@@ -759,7 +721,7 @@ Expected output:
 *** Script:   ✓ Added claude_mcp role to sn_aia_execution_plan ACL
 ...
 *** Script: === Permission Setup Complete ===
-*** Script: ✓ Successfully configured: 9 tables
+*** Script: ✓ Successfully configured: 6 tables
 ```
 
 ---
@@ -780,7 +742,7 @@ python-dotenv>=1.0.0
 
 ### Version 1.0.0 (2026-02-02)
 - Initial release
-- 9 working tools for ServiceNow debugging
+- 6 working tools for ServiceNow debugging
 - Comprehensive documentation
 - Verified table permissions
 - Security best practices implemented
