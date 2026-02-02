@@ -9,7 +9,7 @@ This Model Context Protocol (MCP) server enables Claude Desktop to directly quer
 - 🔍 **Application Logs** - Query syslog entries with flexible filtering
 - 🤖 **AI Execution Monitoring** - Track AI agent activity and execution plans
 - 📊 **GenAI Metrics** - View AI metrics and user feedback
-- 🔄 **Workflow Tracking** - Monitor classic workflow executions
+- 🔄 **Workflow Debugging** - Monitor workflow executions, history, and logs
 - 🔌 **REST API Configs** - View outbound REST integrations
 - 📝 **GenAI Metadata** - Query GenAI metadata including user feedback
 
@@ -200,7 +200,9 @@ Show me recent errors from syslog
 
 What AI execution plans have run recently?
 
-Show me GenAI metadata from the last hour
+Show me workflow logs with errors from the last 24 hours
+
+Are there any workflows currently executing?
 
 Show me REST API configurations
 ```
@@ -257,6 +259,9 @@ This script creates Access Control Lists (ACLs) that grant read-only access to:
 - `sys_gen_ai_log_metadata` - GenAI metadata
 - `sys_rest_message` - REST API configurations
 - `wf_context` - Workflow contexts
+- `wf_executing` - Currently executing workflows
+- `wf_history` - Workflow execution history
+- `wf_log` - Workflow detailed logs
 
 ### Verify Permissions
 
@@ -326,13 +331,43 @@ View REST message configurations for outbound integrations.
 **Example:** "Show me REST API configurations"
 
 ### 6. query_workflow_context
-Monitor classic workflow executions (pre-Flow Designer).
+Monitor classic workflow contexts to see workflow executions.
 
 **Parameters:**
 - `limit` - Max results (default 20)
 - `minutes_ago` - Time window (default 60)
 
 **Example:** "Show me recent workflow executions"
+
+### 7. query_workflow_executing
+View currently executing workflows in real-time.
+
+**Parameters:**
+- `workflow_name` - Filter by workflow name (partial match)
+- `limit` - Max results (default 20)
+
+**Example:** "Are there any workflows currently running?"
+
+### 8. query_workflow_history
+Query workflow execution history to see completed and failed workflows.
+
+**Parameters:**
+- `workflow_name` - Filter by workflow name (partial match)
+- `limit` - Max results (default 20)
+- `minutes_ago` - Time window (default 1440 = 24 hours)
+
+**Example:** "Show me workflow executions from the last 24 hours"
+
+### 9. query_workflow_log
+Query detailed workflow logs including errors and debugging information.
+
+**Parameters:**
+- `workflow_name` - Filter by workflow name (partial match)
+- `level` - Filter by log level (error, warn, info, debug)
+- `limit` - Max results (default 20)
+- `minutes_ago` - Time window (default 1440 = 24 hours)
+
+**Example:** "Show me workflow error logs from today"
 
 ---
 
@@ -466,8 +501,8 @@ Testing: query_syslog (syslog)
 
 Summary
 ================================================================================
-Total tools tested: 6
-✓ Successful: 6
+Total tools tested: 9
+✓ Successful: 9
 ✗ Failed: 0
 ```
 
@@ -633,7 +668,10 @@ var tables = [
     'sys_generative_ai_metric',
     'sys_gen_ai_log_metadata',
     'sys_rest_message',
-    'wf_context'
+    'wf_context',
+    'wf_executing',
+    'wf_history',
+    'wf_log'
 ];
 
 // Get the claude_mcp role sys_id
@@ -721,7 +759,7 @@ Expected output:
 *** Script:   ✓ Added claude_mcp role to sn_aia_execution_plan ACL
 ...
 *** Script: === Permission Setup Complete ===
-*** Script: ✓ Successfully configured: 6 tables
+*** Script: ✓ Successfully configured: 9 tables
 ```
 
 ---
@@ -739,6 +777,12 @@ python-dotenv>=1.0.0
 ---
 
 ## Changelog
+
+### Version 1.1.0 (2026-02-02)
+- Added 3 workflow debugging tools (wf_executing, wf_history, wf_log)
+- Enhanced workflow troubleshooting capabilities
+- 9 total working tools
+- Updated documentation and permission scripts
 
 ### Version 1.0.0 (2026-02-02)
 - Initial release

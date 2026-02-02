@@ -376,5 +376,167 @@ def query_workflow_context(
     return "\n---\n".join(output)
 
 
+@mcp.tool()
+def query_workflow_executing(
+    workflow_name: str = "",
+    limit: int = 20,
+) -> str:
+    """
+    Query currently executing workflows to see real-time workflow activity.
+
+    Args:
+        workflow_name: Filter by workflow name (partial match)
+        limit: Maximum number of results (default 20)
+    """
+    query_parts = []
+    if workflow_name:
+        query_parts.append(f"nameLIKE{workflow_name}")
+
+    query = "^".join(query_parts) if query_parts else ""
+
+    url = f"{INSTANCE}/api/now/table/wf_executing"
+    params = {
+        "sysparm_query": f"{query}^ORDERBYDESCsys_created_on"
+        if query
+        else "ORDERBYDESCsys_created_on",
+        "sysparm_limit": limit,
+        "sysparm_display_value": "true",
+    }
+
+    response = requests.get(
+        url,
+        params=params,
+        auth=(USERNAME, PASSWORD),
+        headers={"Accept": "application/json"},
+    )
+
+    if response.status_code != 200:
+        return f"Error: {response.status_code} - {response.text}"
+
+    results = response.json().get("result", [])
+    if not results:
+        return "No currently executing workflows found."
+
+    output = []
+    for entry in results:
+        output.append(
+            f"[{entry.get('sys_created_on')}]\n"
+            f"  Workflow: {entry.get('name', 'N/A')}\n"
+            f"  Context: {entry.get('context', 'N/A')}\n"
+            f"  Activity: {entry.get('activity', 'N/A')}\n"
+            f"  State: {entry.get('state', 'N/A')}"
+        )
+    return "\n---\n".join(output)
+
+
+@mcp.tool()
+def query_workflow_history(
+    workflow_name: str = "",
+    limit: int = 20,
+    minutes_ago: int = 1440,
+) -> str:
+    """
+    Query workflow execution history to see completed and failed workflows.
+
+    Args:
+        workflow_name: Filter by workflow name (partial match)
+        limit: Maximum number of results (default 20)
+        minutes_ago: Look back this many minutes (default 1440 = 24 hours)
+    """
+    query_parts = []
+    if workflow_name:
+        query_parts.append(f"workflow_versionLIKE{workflow_name}")
+    query_parts.append(f"sys_created_onRELATIVEGT@minute@ago@{minutes_ago}")
+    query = "^".join(query_parts)
+
+    url = f"{INSTANCE}/api/now/table/wf_history"
+    params = {
+        "sysparm_query": f"{query}^ORDERBYDESCsys_created_on",
+        "sysparm_limit": limit,
+        "sysparm_display_value": "true",
+    }
+
+    response = requests.get(
+        url,
+        params=params,
+        auth=(USERNAME, PASSWORD),
+        headers={"Accept": "application/json"},
+    )
+
+    if response.status_code != 200:
+        return f"Error: {response.status_code} - {response.text}"
+
+    results = response.json().get("result", [])
+    if not results:
+        return "No workflow history found matching your criteria."
+
+    output = []
+    for entry in results:
+        output.append(
+            f"[{entry.get('sys_created_on')}]\n"
+            f"  Workflow: {entry.get('workflow_version', 'N/A')}\n"
+            f"  Activity: {entry.get('activity', 'N/A')}\n"
+            f"  Result: {entry.get('result', 'N/A')}\n"
+            f"  Duration: {entry.get('duration', 'N/A')}"
+        )
+    return "\n---\n".join(output)
+
+
+@mcp.tool()
+def query_workflow_log(
+    workflow_name: str = "",
+    level: str = "",
+    limit: int = 20,
+    minutes_ago: int = 1440,
+) -> str:
+    """
+    Query workflow logs to see detailed workflow execution logs and errors.
+
+    Args:
+        workflow_name: Filter by workflow name (partial match)
+        level: Filter by log level (error, warn, info, debug)
+        limit: Maximum number of results (default 20)
+        minutes_ago: Look back this many minutes (default 1440 = 24 hours)
+    """
+    query_parts = []
+    if workflow_name:
+        query_parts.append(f"workflow_versionLIKE{workflow_name}")
+    if level:
+        query_parts.append(f"level={level}")
+    query_parts.append(f"sys_created_onRELATIVEGT@minute@ago@{minutes_ago}")
+    query = "^".join(query_parts)
+
+    url = f"{INSTANCE}/api/now/table/wf_log"
+    params = {
+        "sysparm_query": f"{query}^ORDERBYDESCsys_created_on",
+        "sysparm_limit": limit,
+        "sysparm_display_value": "true",
+    }
+
+    response = requests.get(
+        url,
+        params=params,
+        auth=(USERNAME, PASSWORD),
+        headers={"Accept": "application/json"},
+    )
+
+    if response.status_code != 200:
+        return f"Error: {response.status_code} - {response.text}"
+
+    results = response.json().get("result", [])
+    if not results:
+        return "No workflow logs found matching your criteria."
+
+    output = []
+    for entry in results:
+        output.append(
+            f"[{entry.get('sys_created_on')}] {entry.get('level', 'INFO').upper()}\n"
+            f"  Workflow: {entry.get('workflow_version', 'N/A')}\n"
+            f"  Activity: {entry.get('activity', 'N/A')}\n"
+            f"  Message: {entry.get('message', 'N/A')}"
+        )
+    return "\n---\n".join(output)
+
+
 if __name__ == "__main__":
     mcp.run()

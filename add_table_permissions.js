@@ -1,7 +1,7 @@
 // ServiceNow Background Script to Add Table Permissions to claude_mcp Role
 // Run this in: System Definition > Scripts - Background
 
-// Tables to grant read access (verified working with mcp.syslog user)
+// Tables to grant read access
 var tables = [
   "syslog",
   "sn_aia_execution_plan",
@@ -9,6 +9,9 @@ var tables = [
   "sys_gen_ai_log_metadata",
   "sys_rest_message",
   "wf_context",
+  "wf_executing",
+  "wf_history",
+  "wf_log",
 ];
 
 // Get the claude_mcp role sys_id
