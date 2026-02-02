@@ -6,12 +6,12 @@ Connect Claude Desktop to your ServiceNow instance for comprehensive debugging a
 
 This Model Context Protocol (MCP) server enables Claude Desktop to directly query your ServiceNow instance, providing:
 
+- 🤖 **AI Agent Monitoring** - Track AI Agent executions (multi-step agentic AI)
+- 📊 **Now Assist Metrics** - Monitor Now Assist usage (summarization, resolution notes, skills)
+- 📝 **Now Assist Metadata** - View GenAI prompts, responses, and user feedback
+- 🔄 **Workflow Debugging** - Monitor workflow executions, history, and detailed logs
 - 🔍 **Application Logs** - Query syslog entries with flexible filtering
-- 🤖 **AI Execution Monitoring** - Track AI agent activity and execution plans
-- 📊 **GenAI Metrics** - View AI metrics and user feedback
-- 🔄 **Workflow Debugging** - Monitor workflow executions, history, and logs
-- 🔌 **REST API Configs** - View outbound REST integrations
-- 📝 **GenAI Metadata** - Query GenAI metadata including user feedback
+- 🔌 **REST API Configs** - View outbound REST integration configurations
 
 ### What is MCP?
 
@@ -196,15 +196,15 @@ Save and exit (Ctrl+X, then Y, then Enter if using nano).
 Start a new conversation in Claude Desktop and try these queries:
 
 ```
-Show me recent errors from syslog
+Show me recent Now Assist activity
 
-What AI execution plans have run recently?
+What AI Agents have executed recently?
 
 Show me workflow logs with errors from the last 24 hours
 
 Are there any workflows currently executing?
 
-Show me REST API configurations
+Show me recent errors from syslog
 ```
 
 ---
@@ -279,59 +279,48 @@ If you cannot see records, review the ACL configuration.
 
 ## Available Tools
 
-Once configured, Claude Desktop can use these tools:
+Once configured, Claude Desktop can use these tools organized by category:
 
-### 1. query_syslog
-Query application logs with flexible filtering.
+### AI & GenAI Tools
 
-**Parameters:**
-- `message_contains` - Filter by message content
-- `source` - Filter by log source
-- `level` - Filter by level (0=Error, 1=Warning, 2=Info, 3=Debug)
-- `limit` - Max results (default 20)
-- `minutes_ago` - Time window (default 60)
+#### 1. ai_agent_executions
+Track AI Agent execution plans (multi-step agentic AI).
 
-**Example:** "Show me errors from the last 30 minutes"
-
-### 2. query_ai_execution_plans
-Track AI agent activity and execution plans.
+**Use this for:** AI Agents that autonomously perform multi-step actions  
+**Not for:** Now Assist skills like summarization or resolution notes
 
 **Parameters:**
 - `status` - Filter by status
 - `limit` - Max results (default 20)
 - `minutes_ago` - Time window (default 60)
 
-**Example:** "Show me AI execution plans from today"
+**Example:** "Show me AI Agent executions from today"
 
-### 3. query_gen_ai_metrics
-View GenAI offensiveness scores and metrics.
+#### 2. now_assist_metrics
+Monitor Now Assist usage metrics and activity.
 
-**Parameters:**
-- `limit` - Max results (default 20)
-- `minutes_ago` - Time window (default 60)
-
-**Example:** "Show me GenAI metrics"
-
-### 4. query_gen_ai_metadata
-Query GenAI metadata including user feedback.
+**Use this for:** Now Assist skills (summarization, resolution notes, text generation)  
+**Not for:** AI Agents
 
 **Parameters:**
 - `limit` - Max results (default 20)
 - `minutes_ago` - Time window (default 60)
 
-**Example:** "Show me GenAI feedback"
+**Example:** "Show me Now Assist activity from the last hour"
 
-### 5. query_rest_messages
-View REST message configurations for outbound integrations.
+#### 3. now_assist_metadata
+View Now Assist metadata with prompts, responses, and user feedback.
 
 **Parameters:**
 - `limit` - Max results (default 20)
 - `minutes_ago` - Time window (default 60)
 
-**Example:** "Show me REST API configurations"
+**Example:** "Show me Now Assist feedback and prompts"
 
-### 6. query_workflow_context
-Monitor classic workflow contexts to see workflow executions.
+### Workflow Tools
+
+#### 4. workflow_context
+Monitor workflow contexts to see workflow executions.
 
 **Parameters:**
 - `limit` - Max results (default 20)
@@ -339,7 +328,7 @@ Monitor classic workflow contexts to see workflow executions.
 
 **Example:** "Show me recent workflow executions"
 
-### 7. query_workflow_executing
+#### 5. workflow_executing
 View currently executing workflows in real-time.
 
 **Parameters:**
@@ -348,7 +337,7 @@ View currently executing workflows in real-time.
 
 **Example:** "Are there any workflows currently running?"
 
-### 8. query_workflow_history
+#### 6. workflow_history
 Query workflow execution history to see completed and failed workflows.
 
 **Parameters:**
@@ -358,7 +347,7 @@ Query workflow execution history to see completed and failed workflows.
 
 **Example:** "Show me workflow executions from the last 24 hours"
 
-### 9. query_workflow_log
+#### 7. workflow_logs
 Query detailed workflow logs including errors and debugging information.
 
 **Parameters:**
@@ -369,6 +358,29 @@ Query detailed workflow logs including errors and debugging information.
 
 **Example:** "Show me workflow error logs from today"
 
+### System Tools
+
+#### 8. syslog
+Query application logs with flexible filtering.
+
+**Parameters:**
+- `message_contains` - Filter by message content
+- `source` - Filter by log source
+- `level` - Filter by level (0=Error, 1=Warning, 2=Info, 3=Debug)
+- `limit` - Max results (default 20)
+- `minutes_ago` - Time window (default 60)
+
+**Example:** "Show me errors from syslog in the last 30 minutes"
+
+#### 9. rest_messages
+View REST message configurations for outbound integrations.
+
+**Parameters:**
+- `limit` - Max results (default 20)
+- `minutes_ago` - Time window (default 60)
+
+**Example:** "Show me REST API configurations"
+
 ---
 
 ## Project Structure
@@ -376,7 +388,7 @@ Query detailed workflow logs including errors and debugging information.
 ```
 servicenow-mcp/
 ├── README.md                           # This file
-├── server.py                           # Main MCP server
+├── server.py                           # Main MCP server entry point
 ├── test_connection.py                  # Connection test script
 ├── test_all_tools.py                   # Tool verification script
 ├── add_table_permissions.js            # ServiceNow permission script
@@ -384,6 +396,25 @@ servicenow-mcp/
 ├── .env                                # Credentials (not in git)
 ├── .gitignore                          # Git ignore rules
 ├── venv/                               # Python virtual environment (not in git)
+├── tools/                              # Modular tool implementations
+│   ├── __init__.py                     # Tools package initialization
+│   ├── ai/                             # AI & GenAI tools
+│   │   ├── __init__.py
+│   │   ├── ai_agent_executions.py      # AI Agent execution tracking
+│   │   ├── now_assist_metrics.py       # Now Assist usage metrics
+│   │   └── now_assist_metadata.py      # Now Assist prompts & feedback
+│   ├── workflows/                      # Workflow debugging tools
+│   │   ├── __init__.py
+│   │   ├── context.py                  # Workflow contexts
+│   │   ├── executing.py                # Currently executing workflows
+│   │   ├── history.py                  # Workflow execution history
+│   │   └── logs.py                     # Detailed workflow logs
+│   └── system/                         # System debugging tools
+│       ├── __init__.py
+│       ├── syslog.py                   # Application logs
+│       └── rest_messages.py            # REST API configurations
+├── artifacts/                          # Backup files
+│   └── server_with_scheduled_jobs_backup.py
 └── table_permissions_needed.md         # Permission documentation
 ```
 
@@ -777,6 +808,28 @@ python-dotenv>=1.0.0
 ---
 
 ## Changelog
+
+### Version 2.0.0 (2026-02-02)
+- **Major refactoring to modular structure**
+  - Organized tools into category-based folders (ai/, workflows/, system/)
+  - Improved code maintainability and scalability
+  - Each tool now in its own dedicated file
+- **Renamed tools for better Claude Desktop tool selection**
+  - `query_ai_execution_plans` → `ai_agent_executions` (clearer AI Agent focus)
+  - `query_gen_ai_metrics` → `now_assist_metrics` (clearer Now Assist focus)
+  - `query_gen_ai_metadata` → `now_assist_metadata`
+  - `query_workflow_context` → `workflow_context`
+  - Workflow tools simplified naming (removed "query_" prefix)
+- **Improved tool descriptions and documentation**
+  - Added clear "Use this for" / "Not for" guidance in AI tools
+  - Helps Claude Desktop distinguish between AI Agents vs Now Assist
+  - Enhanced inline documentation for each tool
+- **Removed non-working tools**
+  - Removed `scheduled_jobs` (requires admin access, out of scope)
+  - Focus on working tools only (9 total)
+- **Updated README with categorized tool listing**
+  - Tools organized by AI & GenAI, Workflows, System categories
+  - Clearer usage examples and parameter documentation
 
 ### Version 1.1.0 (2026-02-02)
 - Added 3 workflow debugging tools (wf_executing, wf_history, wf_log)

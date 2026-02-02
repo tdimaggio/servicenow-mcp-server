@@ -17,7 +17,7 @@ PASSWORD = os.getenv("SERVICENOW_PASSWORD")
 # Define all working tools to test (9 tools)
 TOOLS = [
     {
-        "name": "query_syslog",
+        "name": "syslog",
         "table": "syslog",
         "params": {
             "sysparm_limit": 2,
@@ -26,7 +26,7 @@ TOOLS = [
         },
     },
     {
-        "name": "query_ai_execution_plans",
+        "name": "ai_agent_executions",
         "table": "sn_aia_execution_plan",
         "params": {
             "sysparm_limit": 2,
@@ -35,7 +35,7 @@ TOOLS = [
         },
     },
     {
-        "name": "query_gen_ai_metrics",
+        "name": "now_assist_metrics",
         "table": "sys_generative_ai_metric",
         "params": {
             "sysparm_limit": 2,
@@ -44,7 +44,7 @@ TOOLS = [
         },
     },
     {
-        "name": "query_gen_ai_metadata",
+        "name": "now_assist_metadata",
         "table": "sys_gen_ai_log_metadata",
         "params": {
             "sysparm_limit": 2,
@@ -53,7 +53,7 @@ TOOLS = [
         },
     },
     {
-        "name": "query_rest_messages",
+        "name": "rest_messages",
         "table": "sys_rest_message",
         "params": {
             "sysparm_limit": 2,
@@ -62,7 +62,7 @@ TOOLS = [
         },
     },
     {
-        "name": "query_workflow_context",
+        "name": "workflow_context",
         "table": "wf_context",
         "params": {
             "sysparm_limit": 2,
@@ -71,7 +71,7 @@ TOOLS = [
         },
     },
     {
-        "name": "query_workflow_executing",
+        "name": "workflow_executing",
         "table": "wf_executing",
         "params": {
             "sysparm_limit": 2,
@@ -80,7 +80,7 @@ TOOLS = [
         },
     },
     {
-        "name": "query_workflow_history",
+        "name": "workflow_history",
         "table": "wf_history",
         "params": {
             "sysparm_limit": 2,
@@ -89,7 +89,7 @@ TOOLS = [
         },
     },
     {
-        "name": "query_workflow_log",
+        "name": "workflow_logs",
         "table": "wf_log",
         "params": {
             "sysparm_limit": 2,
