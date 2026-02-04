@@ -40,7 +40,7 @@ def query_incidents(
         url = f"{INSTANCE}/api/now/table/incident/{sys_id}"
         params = {
             "sysparm_display_value": "true",
-            "sysparm_fields": "number,short_description,description,state,priority,urgency,impact,category,assigned_to,assignment_group,sys_created_on,sys_updated_on,work_notes,close_notes",
+            "sysparm_fields": "number,short_description,description,state,priority,urgency,impact,category,assigned_to,assignment_group,sys_created_on,sys_updated_on,work_notes,close_notes,sys_id",
         }
     else:
         # Query-based lookup
@@ -54,7 +54,7 @@ def query_incidents(
             "sysparm_query": f"{query}^ORDERBYDESCsys_updated_on",
             "sysparm_limit": limit,
             "sysparm_display_value": "true",
-            "sysparm_fields": "number,short_description,description,state,priority,urgency,impact,category,assigned_to,assignment_group,sys_created_on,sys_updated_on,work_notes,close_notes",
+            "sysparm_fields": "number,short_description,description,state,priority,urgency,impact,category,assigned_to,assignment_group,sys_created_on,sys_updated_on,work_notes,close_notes,sys_id",
         }
 
     response = requests.get(
