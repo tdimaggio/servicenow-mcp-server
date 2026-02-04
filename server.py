@@ -23,6 +23,7 @@ from tools.ai import (
     query_now_assist_metrics,
 )
 from tools.system import (
+    query_incidents,
     query_rest_messages,
     query_syslog,
 )
@@ -123,6 +124,17 @@ def rest_messages(
 ) -> str:
     """Query REST message configurations for outbound integrations"""
     return query_rest_messages(limit, minutes_ago)
+
+
+@mcp.tool()
+def incidents(
+    number: str = "",
+    sys_id: str = "",
+    limit: int = 10,
+    minutes_ago: int = 1440,
+) -> str:
+    """Query incident records by number or sys_id for AI activity context"""
+    return query_incidents(number, sys_id, limit, minutes_ago)
 
 
 if __name__ == "__main__":

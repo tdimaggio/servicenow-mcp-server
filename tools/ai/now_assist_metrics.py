@@ -61,9 +61,41 @@ def query_now_assist_metrics(
 
     output = []
     for entry in results:
+        # Parse the value field if it exists (contains request/response details)
+        value_data = entry.get("value", "")
+        error_msg = ""
+        activity_type = ""
+
+        # Try to extract useful info from value field
+        if "error" in value_data.lower():
+            # Extract error message
+            if '"error":' in value_data:
+                try:
+                    import json
+
+                    value_json = json.loads(value_data)
+                    error_msg = value_json.get(
+                        "error", value_json.get("response", {}).get("error", "")
+                    )
+                except:
+                    error_msg = "Error present (see details)"
+
+        if '"type":' in value_data:
+            try:
+                import json
+
+                value_json = json.loads(value_data)
+                activity_type = value_json.get("type", "")
+            except:
+                pass
+
         output.append(
             f"[{entry.get('sys_created_on')}]\n"
-            f"  Metric: {entry.get('metric', 'N/A')}\n"
-            f"  Sys ID: {entry.get('sys_id', 'N/A')}"
+            f"  Name: {entry.get('name', 'N/A')}\n"
+            f"  Type: {entry.get('type', 'N/A')}\n"
+            f"  Source: {entry.get('source', 'N/A')}\n"
+            + (f"  Activity: {activity_type}\n" if activity_type else "")
+            + (f"  ⚠️ Error: {error_msg}\n" if error_msg else "")
+            + f"  Sys ID: {entry.get('sys_id', 'N/A')}"
         )
     return "\n---\n".join(output)

@@ -61,9 +61,21 @@ def query_now_assist_metadata(
 
     output = []
     for entry in results:
+        # Get useful fields
+        source = entry.get("source", "N/A")
+        model = entry.get("model_version", "N/A")
+        feedback = entry.get("feedback", "")
+        error = entry.get("error", "")
+        target_table = entry.get("target_table", "")
+        target_record = entry.get("target_record", "")
+
         output.append(
             f"[{entry.get('sys_created_on')}]\n"
-            f"  Feedback: {entry.get('feedback', 'N/A')}\n"
-            f"  Sys ID: {entry.get('sys_id', 'N/A')}"
+            f"  Source: {source}\n"
+            f"  Model: {model}\n"
+            + (f"  Target: {target_table} ({target_record})\n" if target_table else "")
+            + (f"  Feedback: {feedback}\n" if feedback else "")
+            + (f"  ⚠️ Error: {error}\n" if error else "")
+            + f"  Sys ID: {entry.get('sys_id', 'N/A')}"
         )
     return "\n---\n".join(output)
