@@ -12,6 +12,7 @@ This Model Context Protocol (MCP) server enables Claude Desktop to directly quer
 - 🔄 **Workflow Debugging** - Monitor workflow executions, history, and detailed logs
 - 🔍 **Application Logs** - Query syslog entries with flexible filtering
 - 🔌 **REST API Configs** - View outbound REST integration configurations
+- 🎫 **Incident Lookup** - Query incident details by number or sys_id for AI activity context
 
 ### What is MCP?
 
@@ -227,7 +228,11 @@ For security, create a dedicated service account for the MCP server:
    - **Web service access only**: ✓ Checked (recommended)
 4. Click **Submit**
 
-### Creating the Role
+### Assigning Roles
+
+The mcp.syslog user needs two roles:
+
+#### 1. Claude MCP Role (for debugging tables)
 
 Create a custom role with read-only access to debugging tables:
 
@@ -241,6 +246,22 @@ Create a custom role with read-only access to debugging tables:
 6. In the **Roles** related list, click **Edit**
 7. Add the `claude_mcp` role
 8. Click **Save**
+
+#### 2. ITIL Role (for incident access)
+
+Add the ITIL role for incident table access:
+
+**Option A: Use the Script (Recommended)**
+1. Navigate to **System Definition > Scripts - Background**
+2. Copy the script from `add_itil_role_to_mcp_user.js`
+3. Paste and run the script
+4. Verify output shows "✓ Added itil role to mcp.syslog user"
+
+**Option B: Manual Assignment**
+1. Go to the `mcp.syslog` user record
+2. In the **Roles** related list, click **Edit**
+3. Add the `itil` role
+4. Click **Save**
 
 ### Granting Table Permissions
 
@@ -381,6 +402,20 @@ View REST message configurations for outbound integrations.
 
 **Example:** "Show me REST API configurations"
 
+#### 10. incidents
+Look up incident records by number or sys_id for context when investigating AI activity.
+
+**Use this for:** Getting full incident details when debugging AI operations on tickets
+
+**Parameters:**
+- `number` - Incident number (e.g., INC0009005) - supports partial match
+- `sys_id` - Incident sys_id for exact lookup
+- `limit` - Max results (default 10)
+- `minutes_ago` - Time window (default 1440 = 24 hours)
+
+**Example:** "Look up incident INC0009005"  
+**Example:** "Show me recent incidents from today"
+
 ---
 
 ## Project Structure
@@ -391,7 +426,8 @@ servicenow-mcp/
 ├── server.py                           # Main MCP server entry point
 ├── test_connection.py                  # Connection test script
 ├── test_all_tools.py                   # Tool verification script
-├── add_table_permissions.js            # ServiceNow permission script
+├── add_table_permissions.js            # ServiceNow ACL permission script
+├── add_itil_role_to_mcp_user.js        # Script to add itil role for incident access
 ├── requirements.txt                    # Python dependencies
 ├── .env                                # Credentials (not in git)
 ├── .gitignore                          # Git ignore rules
@@ -412,7 +448,8 @@ servicenow-mcp/
 │   └── system/                         # System debugging tools
 │       ├── __init__.py
 │       ├── syslog.py                   # Application logs
-│       └── rest_messages.py            # REST API configurations
+│       ├── rest_messages.py            # REST API configurations
+│       └── incidents.py                # Incident lookup tool
 ├── artifacts/                          # Backup files
 │   └── server_with_scheduled_jobs_backup.py
 └── table_permissions_needed.md         # Permission documentation
@@ -808,6 +845,29 @@ python-dotenv>=1.0.0
 ---
 
 ## Changelog
+
+### Version 2.1.1 (2026-02-04)
+- **Fixed incident tool sys_id field**
+  - Added sys_id to query results (was showing as "N/A")
+  - Incident lookups now return complete information
+- **Added itil role script**
+  - Created `add_itil_role_to_mcp_user.js` for granting incident access
+  - Cleaner approach than modifying ACL scripts
+- **Updated documentation**
+  - README now reflects 10 tools total
+  - Added itil role requirement to setup instructions
+
+### Version 2.1.0 (2026-02-04)
+- **Enhanced tool output for better debugging**
+  - `now_assist_metrics` now shows: name, type, source, activity, error messages
+  - `now_assist_metadata` now shows: source, model, target info, feedback, errors
+  - No more useless "N/A" and empty values
+- **Added incident lookup tool** 
+  - New `incidents` tool in tools/system/
+  - Look up by incident number (INC0009005) or sys_id
+  - Shows comprehensive incident details (description, state, priority, work notes)
+  - Essential for investigating AI activity on specific tickets
+- **Tool count: Now 10 working tools**
 
 ### Version 2.0.0 (2026-02-02)
 - **Major refactoring to modular structure**
