@@ -9,6 +9,7 @@ This Model Context Protocol (MCP) server enables Claude Desktop to directly quer
 - 🤖 **AI Agent Monitoring** - Track AI Agent executions (multi-step agentic AI)
 - 📊 **Now Assist Metrics** - Monitor Now Assist usage (summarization, resolution notes, skills)
 - 📝 **Now Assist Metadata** - View GenAI prompts, responses, and user feedback
+- 📈 **AI ROI Analysis** - Measure AI impact: Do incidents/changes resolve faster with AI?
 - 🔄 **Workflow Debugging** - Monitor workflow executions, history, and detailed logs
 - 🔍 **Application Logs** - Query syslog entries with flexible filtering
 - 🔌 **REST API Configs** - View outbound REST integration configurations
@@ -338,9 +339,28 @@ View Now Assist metadata with prompts, responses, and user feedback.
 
 **Example:** "Show me Now Assist feedback and prompts"
 
+#### 4. ai_roi_analysis
+Analyze AI ROI by comparing resolution times for AI-assisted vs non-AI records.
+
+**Use this for:** Measuring business value - Do incidents/changes resolve faster with AI?
+
+**Metrics by table:**
+- `incident` - Mean Time to Resolution (MTTR)
+- `change_request` - Mean Time to Implementation
+- `problem` - Mean Time to Root Cause
+- `sn_customerservice_case` - Mean Time to Closure
+
+**Parameters:**
+- `table_name` - Table to analyze: incident, change_request, problem, sn_customerservice_case (default: incident)
+- `breakdown_by` - Break down results by: priority, category, group, or none (default: priority)
+
+**Example:** "Analyze AI ROI for incidents"  
+**Example:** "Show me AI impact on change request implementation times"  
+**Example:** "Do incidents with AI resolve faster than without?"
+
 ### Workflow Tools
 
-#### 4. workflow_context
+#### 5. workflow_context
 Monitor workflow contexts to see workflow executions.
 
 **Parameters:**
@@ -349,7 +369,7 @@ Monitor workflow contexts to see workflow executions.
 
 **Example:** "Show me recent workflow executions"
 
-#### 5. workflow_executing
+#### 6. workflow_executing
 View currently executing workflows in real-time.
 
 **Parameters:**
@@ -358,7 +378,7 @@ View currently executing workflows in real-time.
 
 **Example:** "Are there any workflows currently running?"
 
-#### 6. workflow_history
+#### 7. workflow_history
 Query workflow execution history to see completed and failed workflows.
 
 **Parameters:**
@@ -368,7 +388,7 @@ Query workflow execution history to see completed and failed workflows.
 
 **Example:** "Show me workflow executions from the last 24 hours"
 
-#### 7. workflow_logs
+#### 8. workflow_logs
 Query detailed workflow logs including errors and debugging information.
 
 **Parameters:**
@@ -381,7 +401,7 @@ Query detailed workflow logs including errors and debugging information.
 
 ### System Tools
 
-#### 8. syslog
+#### 9. syslog
 Query application logs with flexible filtering.
 
 **Parameters:**
@@ -393,7 +413,7 @@ Query application logs with flexible filtering.
 
 **Example:** "Show me errors from syslog in the last 30 minutes"
 
-#### 9. rest_messages
+#### 10. rest_messages
 View REST message configurations for outbound integrations.
 
 **Parameters:**
@@ -402,7 +422,7 @@ View REST message configurations for outbound integrations.
 
 **Example:** "Show me REST API configurations"
 
-#### 10. incidents
+#### 11. incidents
 Look up incident records by number or sys_id for context when investigating AI activity.
 
 **Use this for:** Getting full incident details when debugging AI operations on tickets
@@ -438,7 +458,8 @@ servicenow-mcp/
 │   │   ├── __init__.py
 │   │   ├── ai_agent_executions.py      # AI Agent execution tracking
 │   │   ├── now_assist_metrics.py       # Now Assist usage metrics
-│   │   └── now_assist_metadata.py      # Now Assist prompts & feedback
+│   │   ├── now_assist_metadata.py      # Now Assist prompts & feedback
+│   │   └── roi_analysis.py             # AI ROI impact analysis
 │   ├── workflows/                      # Workflow debugging tools
 │   │   ├── __init__.py
 │   │   ├── context.py                  # Workflow contexts

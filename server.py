@@ -19,6 +19,7 @@ mcp = FastMCP("servicenow-debug")
 # Import all tools from modular structure
 from tools.ai import (
     query_ai_agent_executions,
+    query_ai_roi_analysis,
     query_now_assist_metadata,
     query_now_assist_metrics,
 )
@@ -62,6 +63,25 @@ def now_assist_metadata(
 ) -> str:
     """Query Now Assist metadata with user feedback and prompts"""
     return query_now_assist_metadata(limit, minutes_ago)
+
+
+@mcp.tool()
+def ai_roi_analysis(
+    table_name: str = "incident",
+    breakdown_by: str = "priority",
+) -> str:
+    """
+    Analyze AI ROI by comparing resolution times for AI-assisted vs non-AI records.
+
+    Measures business value: Do incidents/changes resolve faster with AI?
+    - incident: Mean Time to Resolution (MTTR)
+    - change_request: Mean Time to Implementation
+    - problem: Mean Time to Root Cause
+    - sn_customerservice_case: Mean Time to Closure
+
+    breakdown_by: priority, category, group, or none
+    """
+    return query_ai_roi_analysis(table_name, breakdown_by)
 
 
 # Register workflow tools

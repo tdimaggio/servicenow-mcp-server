@@ -14,7 +14,7 @@ INSTANCE = os.getenv("SERVICENOW_INSTANCE")
 USERNAME = os.getenv("SERVICENOW_USERNAME")
 PASSWORD = os.getenv("SERVICENOW_PASSWORD")
 
-# Define all working tools to test (9 tools)
+# Define all working tools to test (11 tools)
 TOOLS = [
     {
         "name": "syslog",
@@ -94,6 +94,24 @@ TOOLS = [
         "params": {
             "sysparm_limit": 2,
             "sysparm_query": "sys_created_onRELATIVEGT@minute@ago@1440^ORDERBYDESCsys_created_on",
+            "sysparm_display_value": "true",
+        },
+    },
+    {
+        "name": "incidents",
+        "table": "incident",
+        "params": {
+            "sysparm_limit": 2,
+            "sysparm_query": "ORDERBYDESCnumber",
+            "sysparm_display_value": "true",
+        },
+    },
+    {
+        "name": "ai_roi_analysis",
+        "table": "sn_aia_execution_plan",  # ROI tool queries this plus incident table
+        "params": {
+            "sysparm_limit": 5,
+            "sysparm_query": "ORDERBYDESCsys_created_on",
             "sysparm_display_value": "true",
         },
     },

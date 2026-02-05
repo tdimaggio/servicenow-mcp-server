@@ -16,7 +16,7 @@ MCP_PASSWORD = os.getenv("SERVICENOW_PASSWORD")
 ADMIN_USERNAME = os.getenv("SERVICENOW_ADMIN_USERNAME")
 ADMIN_PASSWORD = os.getenv("SERVICENOW_ADMIN_PASSWORD")
 
-# All 9 tools to test
+# All 11 tools to test
 TOOLS = [
     ("syslog", "Application Logs"),
     ("sn_aia_execution_plan", "AI Execution Plans"),
@@ -27,6 +27,8 @@ TOOLS = [
     ("wf_executing", "Currently Executing Workflows"),
     ("wf_history", "Workflow History"),
     ("wf_log", "Workflow Logs"),
+    ("incident", "Incidents (for AI context)"),
+    ("change_request", "Change Requests (for AI ROI)"),
 ]
 
 
@@ -189,7 +191,7 @@ def main():
         print(f"\n  - {len(working)} tools have data and are accessible")
         print(f"  - {len(no_data)} tools have no data yet (normal)")
         print(f"  - 0 permission issues")
-        print("\nYou're ready to use all 9 tools in Claude Desktop!")
+        print("\nYou're ready to use all 11 tools in Claude Desktop!")
     else:
         print(f"\n⚠ ISSUES FOUND: {total_issues} tools have permission problems")
         print(f"\n  - {len(working)} tools working correctly")
