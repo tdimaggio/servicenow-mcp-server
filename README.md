@@ -867,6 +867,22 @@ python-dotenv>=1.0.0
 
 ## Changelog
 
+### Version 2.2.0 (2026-02-05)
+- **Added AI ROI Analysis tool**
+  - New `ai_roi_analysis` tool measures business impact of AI
+  - Compares resolution times: AI-assisted vs non-AI records
+  - Answers: "Do incidents/changes resolve faster with AI?"
+  - Supports incident (MTTR), change_request (implementation time), problem (root cause time), case (closure time)
+  - Breakdown analysis by priority, category, or assignment group
+  - Identifies AI usage by parsing sn_aia_execution_plan objectives
+  - Shows percentage improvement and time saved per record
+  - Works with least-privilege mcp.syslog credentials
+- **Updated test scripts**
+  - test_all_tools.py now validates 11 tools (was 9)
+  - test_all_tools_comparison.py validates incident and change_request access
+  - All tests passing with mcp.syslog credentials
+- **Tool count: Now 11 working tools**
+
 ### Version 2.1.1 (2026-02-04)
 - **Fixed incident tool sys_id field**
   - Added sys_id to query results (was showing as "N/A")
